@@ -2,8 +2,8 @@ import getpass
 import sys
 # Import your own module
 from vault_file_manager import VaultFileManager
-# Import the stubs (Later, change this to: from crypto_manager import CryptoManager)
-from interfaces import CryptoManagerStub, MFAServiceStub
+from crypto_manager import CryptoManager
+from mfa_client import MFAService
 
 # Try to import pyperclip, but don't crash if it's missing
 try:
@@ -15,8 +15,8 @@ except ImportError:
 class VaultGuardClient:
     def __init__(self):
         self.file_manager = VaultFileManager()
-        self.crypto = CryptoManagerStub() # Member 2 Interface
-        self.mfa = MFAServiceStub()       # Member 3 Interface
+        self.crypto = CryptoManager() # Real Implementation
+        self.mfa = MFAService()       # Real Implementation
         self.credentials = []
         self.master_password = None
 
@@ -44,6 +44,10 @@ class VaultGuardClient:
             self.credentials = []
         else:
             self.credentials = self.crypto.decrypt_data(encrypted_data, self.master_password)
+            if self.credentials is None:
+                print("[Error] Decryption failed! Wrong password or incompatible vault version.")
+                print("[Hint] If you just upgraded the code, delete 'vault.dat' to start fresh.")
+                sys.exit()
 
         self.main_menu()
 

@@ -1,0 +1,9 @@
+@echo off
+set VENV_PATH=c:\Users\aliab\Desktop\Semester 9\Computer Networks and Security\VaultGuard_Project\.venv
+echo Activating venv...
+call "%VENV_PATH%\Scripts\activate.bat"
+echo Installing pycryptodome...
+pip install pycryptodome
+echo Installing other deps...
+pip install flask pyotp requests pyopenssl
+echo Done.
