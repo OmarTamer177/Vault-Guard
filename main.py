@@ -5,6 +5,9 @@ from vault_file_manager import VaultFileManager
 # Import the stubs (Later, change this to: from crypto_manager import CryptoManager)
 from interfaces import CryptoManagerStub, MFAServiceStub
 
+# Import crypto module (Member 2)
+from crypto_manager import CryptoManager
+
 # Try to import pyperclip, but don't crash if it's missing
 try:
     import pyperclip
@@ -15,7 +18,7 @@ except ImportError:
 class VaultGuardClient:
     def __init__(self):
         self.file_manager = VaultFileManager()
-        self.crypto = CryptoManagerStub() # Member 2 Interface
+        self.crypto = CryptoManager() # Member 2 Interface
         self.mfa = MFAServiceStub()       # Member 3 Interface
         self.credentials = []
         self.master_password = None
