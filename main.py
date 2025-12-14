@@ -1,13 +1,9 @@
 import getpass
 import sys
-# Import your own module
+import time
 from vault_file_manager import VaultFileManager
-# Import the stubs (Later, change this to: from crypto_manager import CryptoManager)
-from interfaces import CryptoManagerStub, MFAServiceStub
-
-# Import crypto module (Member 2)
 from crypto_manager import CryptoManager
-
+from mfa_client import MFAService
 
 # Try to import pyperclip, but don't crash if it's missing
 try:
@@ -19,8 +15,8 @@ except ImportError:
 class VaultGuardClient:
     def __init__(self):
         self.file_manager = VaultFileManager()
-        self.crypto = CryptoManager() # Member 2 Interface
-        self.mfa = MFAServiceStub()       # Member 3 Interface
+        self.crypto = CryptoManager()
+        self.mfa = MFAService()
         self.credentials = []
         self.master_password = None
 
@@ -32,7 +28,7 @@ class VaultGuardClient:
         # 1. Master Password Input
         self.master_password = getpass.getpass("Enter Master Password: ")
         
-        # 2. MFA Authentication (Member 3 Integration)
+        # 2. MFA Authentication
         if not self.mfa.perform_login():
             print("[Access Denied] MFA Failed.")
             sys.exit()
@@ -47,10 +43,12 @@ class VaultGuardClient:
             print("[System] Creating a new empty vault.")
             self.credentials = []
         else:
-            self.credentials = self.crypto.decrypt_data(encrypted_data, self.master_password)
-            if self.credentials is None:
-                print("[Error] Decryption failed! Wrong password or incompatible vault version.")
-                print("[Hint] If you just upgraded the code, delete 'vault.dat' to start fresh.")
+
+            try:
+                self.credentials = self.crypto.decrypt_data(encrypted_data, self.master_password)
+            except Exception as e:
+                print(f"[Error] Access Denied: {e}")
+                print("[Hint] If you forgot your password or want to start fresh, delete 'vault.dat'.")
                 sys.exit()
 
         self.main_menu()

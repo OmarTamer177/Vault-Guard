@@ -22,15 +22,15 @@ class TestCryptoManager(unittest.TestCase):
 
     def test_wrong_password(self):
         encrypted = self.crypto.encrypt_data(self.data, self.master_password)
-        decrypted = self.crypto.decrypt_data(encrypted, "wrong_password")
-        self.assertIsNone(decrypted)
+        with self.assertRaises(Exception):
+            self.crypto.decrypt_data(encrypted, "wrong_password")
 
     def test_tampered_data(self):
         encrypted = bytearray(self.crypto.encrypt_data(self.data, self.master_password))
         # Modify the last byte (part of ciphertext or tag)
         encrypted[-1] ^= 0xFF
-        decrypted = self.crypto.decrypt_data(bytes(encrypted), self.master_password)
-        self.assertIsNone(decrypted)
+        with self.assertRaises(Exception):
+            self.crypto.decrypt_data(bytes(encrypted), self.master_password)
 
 if __name__ == '__main__':
     unittest.main()

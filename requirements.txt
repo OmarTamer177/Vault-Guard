@@ -1,5 +1,7 @@
-pycryptodomex
-pyotp
+cryptography
+argon2-cffi
 flask
 requests
-pyopenssl
+pyotp
+urllib3
+pyperclip
