@@ -322,6 +322,10 @@ This project demonstrates:
 ## 👥 Contributors
 
 - **Ali Tarek** - Project Lead & Implementation
+- **Omar Tamer** - Core Development & Security Features
+- **Fatma Ayman** - Backend Development & MFA
+- **Ahmed El-Baramouny** - Security Analysis & Testing
+- **Ahmed Mohamed** - GUI Development & Documentation
 - Course: Information Security
 - Institution: [Your University Name]
 - Date: December 2025
@@ -362,13 +366,5 @@ python mfa_server.py
 
 ---
 
-## 📞 Support
-
-For issues and questions:
-- Check documentation above
-- Review test cases in `tests/` directory
-- Consult project requirements document
-
----
 
 **Built with security in mind. Keep your passwords safe! 🔐**
