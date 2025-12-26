@@ -7,8 +7,12 @@ class VaultFileManager:
     """
     Handles reading/writing the vault file and verifying integrity.
     """
-    def __init__(self, filename="vault.dat"):
-        self.filename = filename
+    def __init__(self, filename=None):
+        if filename:
+            self.filename = filename
+        else:
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            self.filename = os.path.join(base_dir, 'data', 'vault.dat')
 
     def _calculate_checksum(self, data_bytes):
         """

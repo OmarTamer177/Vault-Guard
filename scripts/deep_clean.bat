@@ -1,6 +1,6 @@
 @echo off
-cd /d "%~dp0"
-set "SITE_PACKAGES=%~dp0.venv\Lib\site-packages"
+cd /d "%~dp0.."
+set "SITE_PACKAGES=%CD%\.venv\Lib\site-packages"
 
 echo [Deep Clean] Target: "%SITE_PACKAGES%"
 
@@ -19,11 +19,11 @@ if exist "%SITE_PACKAGES%" (
 )
 
 echo Re-installing pycryptodome...
-"%~dp0.venv\Scripts\python.exe" -m pip install pycryptodome==3.23.0
+"%CD%\.venv\Scripts\python.exe" -m pip install pycryptodome==3.23.0
 
 echo Verification...
-"%~dp0.venv\Scripts\python.exe" -c "from Crypto.Protocol.KDF import Argon2; print('SUCCESS: Argon2 is working.')"
+"%CD%\.venv\Scripts\python.exe" -c "from Crypto.Protocol.KDF import Argon2; print('SUCCESS: Argon2 is working.')"
 
 echo.
-echo If SUCCESS is printed above, run 'run_app.bat' to start.
+echo If SUCCESS is printed above, you are good to go.
 pause

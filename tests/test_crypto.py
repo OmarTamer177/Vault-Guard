@@ -4,7 +4,7 @@ import unittest
 # Add parent directory to path so we can import modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from crypto_manager import CryptoManager
+from src.core.crypto_manager import CryptoManager
 
 class TestCryptoManager(unittest.TestCase):
     def setUp(self):

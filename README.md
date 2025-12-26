@@ -14,6 +14,7 @@ VaultGuard is a comprehensive security project implementing a password manager w
 - **SSL/TLS Secured Communication** - All network traffic encrypted using HTTPS
 - **SHA-256 Integrity Verification** - Detect any tampering with vault files
 - **Dual Transfer OTP Mechanism** - Server generates OTPs accessible by both mobile and desktop apps
+- **Modern Dark UI** - Professional, high-contrast interface using CustomTkinter
 
 ---
 
@@ -65,6 +66,9 @@ requests
 pyotp
 urllib3
 pyperclip
+customtkinter  <-- NEW: Modern GUI Library
+pillow
+packaging
 ```
 
 ---
@@ -78,7 +82,7 @@ pyperclip
 git clone https://github.com/AliTarek-1/security.git
 cd security
 
-# Install dependencies
+# Install dependencies (REQUIRED for new GUI)
 install_deps.bat
 ```
 
@@ -90,8 +94,8 @@ start_gui.bat
 ```
 This launches:
 - MFA Server (HTTPS on port 5000)
-- Mobile Authenticator GUI
-- VaultGuard Password Manager GUI
+- Mobile Authenticator (Modern Dark UI)
+- VaultGuard Password Manager (Modern Dark UI)
 
 **Option B: Console Version**
 ```bash
@@ -103,18 +107,18 @@ This launches command-line interfaces for all components.
 
 1. **Register in Mobile App**
    - Open Mobile Authenticator
-   - Click "Register New Device"
+   - Click "Scan / Register New Device"
    - Enter username (e.g., "bob")
    - Save the secret displayed
 
 2. **Get OTP Code**
-   - Click on your username in the mobile app
-   - Note the 6-digit OTP code
+   - Click on your username in the mobile app card
+   - Note the large blue 6-digit OTP code
    - Code refreshes every 60 seconds
 
 3. **Login to VaultGuard**
    - Open VaultGuard Password Manager
-   - Enter Master Password (create new one)
+   - Enter Master Password (create new one if first time)
    - Enter username (same as mobile app)
    - Enter current OTP code
    - Access granted!
@@ -126,7 +130,7 @@ This launches command-line interfaces for all components.
 ### Components
 
 #### 1. VaultGuard Client (`vault_gui.py`)
-- Main password manager interface
+- Main password manager interface (CustomTkinter)
 - Handles master password authentication
 - Encrypts/decrypts vault data locally
 - Communicates with MFA server for authentication
@@ -138,7 +142,7 @@ This launches command-line interfaces for all components.
 - Dual transfer OTP mechanism
 
 #### 3. Mobile Authenticator (`mobile_auth_gui.py`)
-- User-friendly GUI for OTP display
+- User-friendly Smartphone-style GUI
 - Saves registered users locally
 - Live OTP countdown timer
 - Copy to clipboard support
@@ -241,27 +245,35 @@ python -m unittest tests.test_integration
 
 ```
 security/
-├── crypto_manager.py       # Cryptographic operations
-├── vault_file_manager.py   # File I/O and integrity
-├── mfa_server.py           # MFA HTTPS server
-├── mfa_client.py           # MFA client library
-├── mobile_auth_gui.py      # Mobile app (GUI)
-├── mobile_auth_app.py      # Mobile app (CLI)
-├── vault_gui.py            # Password manager (GUI)
-├── main.py                 # Password manager (CLI)
-├── start_gui.bat           # Launch GUI version
-├── start_system.bat        # Launch CLI version
-├── run_tests.bat           # Run test suite
-├── requirements.txt        # Python dependencies
-├── vault.dat               # Encrypted vault (generated)
-├── mfa_db.json             # MFA user database
-├── mobile_users.json       # Mobile app saved users
-└── tests/
-    ├── test_crypto.py      # Encryption tests
-    ├── test_argon2.py      # KDF tests
-    ├── test_mfa.py         # TOTP tests
-    ├── test_vault.py       # File integrity tests
-    └── test_integration.py # End-to-end tests
+├── src/
+│   ├── auth/
+│   │   ├── mfa_server.py       # MFA HTTPS server
+│   │   └── mfa_client.py       # MFA client library
+│   ├── cli/
+│   │   ├── main.py             # CLI Entry point
+│   │   └── mobile_auth_app.py  # Mobile CLI
+│   ├── core/
+│   │   ├── crypto_manager.py   # Cryptography Core
+│   │   └── vault_file_manager.py # File Manager
+│   ├── gui/
+│   │   ├── vault_gui.py        # Main Desktop App
+│   │   └── mobile_auth_gui.py  # Mobile App Simulator
+│   └── utils/
+├── data/                       # Storage for Vault & DBs
+│   ├── vault.dat
+│   ├── mfa_db.json
+│   └── mobile_users.json
+├── docs/
+│   └── VaultGuard_Report.tex
+├── scripts/                    # Helper batch scripts
+│   ├── run_app.bat
+│   └── ...
+├── tests/                      # Unit & Integration Tests
+├── start_gui.bat               # ONE-CLICK LAUNCHER
+├── run_tests.bat               # Test Runner
+├── install_deps.bat            # Dependency Installer
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -299,7 +311,7 @@ security/
 - **cryptography** - AES-GCM encryption
 - **argon2-cffi** - Argon2 key derivation
 - **pyotp** - TOTP implementation
-- **tkinter** - GUI framework
+- **CustomTkinter** - Modern GUI framework
 - **unittest** - Testing framework
 
 ---
@@ -341,16 +353,17 @@ This project is for educational purposes as part of an Information Security cour
 ## 🆘 Troubleshooting
 
 ### Issue: "Could not connect to MFA Server"
-**Solution**: Make sure `mfa_server.py` is running first
-```bash
-python mfa_server.py
-```
+**Solution**: Make sure `mfa_server.py` is running first. `start_gui.bat` handles this automatically.
 
 ### Issue: "Invalid or expired OTP"
 **Solution**: 
 - Check that OTP is entered within 60 seconds
 - Ensure system clocks are synchronized
 - Verify you're using the correct username
+
+### Issue: "CustomTkinter not found"
+**Solution**:
+- Run `install_deps.bat` to install the new GUI dependencies.
 
 ### Issue: "Failed to decrypt vault"
 **Solution**:

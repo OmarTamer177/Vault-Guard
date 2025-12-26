@@ -6,7 +6,8 @@ import json
 
 app = Flask(__name__)
 
-DB_FILE = "mfa_db.json"
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DB_FILE = os.path.join(base_dir, 'data', 'mfa_db.json')
 
 def load_db():
     if os.path.exists(DB_FILE):

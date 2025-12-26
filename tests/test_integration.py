@@ -6,8 +6,8 @@ import tempfile
 # Add parent directory to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from crypto_manager import CryptoManager
-from vault_file_manager import VaultFileManager
+from src.core.crypto_manager import CryptoManager
+from src.core.vault_file_manager import VaultFileManager
 
 class TestIntegration(unittest.TestCase):
     """Integration tests for complete encryption/decryption workflow"""

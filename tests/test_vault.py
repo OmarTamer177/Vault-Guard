@@ -7,7 +7,7 @@ import json
 # Add parent directory to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from vault_file_manager import VaultFileManager
+from src.core.vault_file_manager import VaultFileManager
 
 class TestVaultFileManager(unittest.TestCase):
     """Test cases for Vault File Manager and Integrity"""

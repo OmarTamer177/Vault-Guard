@@ -1,9 +1,18 @@
 import getpass
 import sys
 import time
-from vault_file_manager import VaultFileManager
-from crypto_manager import CryptoManager
-from mfa_client import MFAService
+import os
+import sys
+
+# Add project root to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from src.core.vault_file_manager import VaultFileManager
+from src.core.crypto_manager import CryptoManager
+from src.auth.mfa_client import MFAService
 
 # Try to import pyperclip, but don't crash if it's missing
 try:

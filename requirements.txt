@@ -5,3 +5,6 @@ requests
 pyotp
 urllib3
 pyperclip
+customtkinter
+packaging
+pillow
