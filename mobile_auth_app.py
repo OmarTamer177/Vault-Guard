@@ -80,7 +80,7 @@ class MobileAuthApp:
             print("No secret found.")
             return
             
-        totp = pyotp.TOTP(self.secret)
+        totp = pyotp.TOTP(self.secret, interval=60)  # 60-second interval as per requirements
         otp = totp.now()
         remaining = totp.interval - (time.time() % totp.interval)
         
