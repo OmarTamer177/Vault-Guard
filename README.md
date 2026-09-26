@@ -163,8 +163,8 @@ This launches command-line interfaces for all components.
 ```
 ┌─────────────────┐     HTTPS     ┌──────────────┐
 │  Mobile Auth    │◄─────────────►│  MFA Server  │
-│      App        │   Register     │   (HTTPS)    │
-└─────────────────┘   Get OTP      └──────────────┘
+│      App        │   Register    │   (HTTPS)    │
+└─────────────────┘   Get OTP     └──────────────┘
                                            ▲
                                            │ HTTPS
                                            │ Verify OTP
