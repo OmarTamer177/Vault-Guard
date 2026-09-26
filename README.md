@@ -1,63 +1,68 @@
-# VaultGuard: Secure Password Vault with SSL/TLS-Secured Multi-Factor Authentication
+# 🔐 VaultGuard
 
-**A secure, cross-platform password vault application with client-side encryption and SSL/TLS-secured TOTP Multi-Factor Authentication.**
+**Secure Password Vault with Client-Side Encryption & SSL/TLS-Secured Multi-Factor Authentication**
 
----
-
-## 🔐 Project Overview
-
-VaultGuard is a comprehensive security project implementing a password manager with enterprise-grade security features:
-
-- **Client-Side AES-256-GCM Encryption** - All data encrypted locally using keys derived from your Master Password
-- **Argon2id Key Derivation** - Industry-standard KDF for secure key generation
-- **60-Second TOTP MFA** - Time-based One-Time Passwords for two-factor authentication
-- **SSL/TLS Secured Communication** - All network traffic encrypted using HTTPS
-- **SHA-256 Integrity Verification** - Detect any tampering with vault files
-- **Dual Transfer OTP Mechanism** - Server generates OTPs accessible by both mobile and desktop apps
-- **Modern Dark UI** - Professional, high-contrast interface using CustomTkinter
+[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![Encryption](https://img.shields.io/badge/Encryption-AES--256--GCM-2ea44f?style=flat-square)](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
+[![KDF](https://img.shields.io/badge/KDF-Argon2id-blue?style=flat-square)](https://en.wikipedia.org/wiki/Argon2)
+[![MFA](https://img.shields.io/badge/MFA-TOTP%20(60s)-orange?style=flat-square)](https://tools.ietf.org/html/rfc6238)
+[![GUI](https://img.shields.io/badge/GUI-CustomTkinter-8A2BE2?style=flat-square)](https://github.com/TomSchimansky/CustomTkinter)
 
 ---
 
-## 🎯 Key Features
+## 📖 Overview
 
-### Security Components
+**VaultGuard** is a robust, cross-platform password management system built from the ground up with defense-in-depth principles. It pairs a modern desktop password manager with client-side cryptography and an external, TLS-secured Time-based One-Time Password (TOTP) authenticator application.
 
-1. **Master Password Authentication**
-   - Argon2id key derivation function (KDF)
-   - Salted password hashing
-   - Never transmitted in plaintext
-
-2. **Client-Side Encryption**
-   - AES-256-GCM symmetric encryption
-   - All credentials encrypted locally
-   - Single encrypted vault file storage
-
-3. **Multi-Factor Authentication (MFA)**
-   - TOTP (Time-based One-Time Password) protocol
-   - 60-second validity window
-   - Dedicated MFA server
-   - Mobile authenticator app (GUI + CLI)
-
-4. **Secure Communication**
-   - SSL/TLS (HTTPS) for all network traffic
-   - Self-signed certificates for development
-   - Production-ready certificate support
-
-5. **Data Integrity**
-   - SHA-256 hash verification
-   - Detects unauthorized file tampering
-   - Automatic integrity checks on load
+* **Client-Side AES-256-GCM Encryption** — Sensitive credentials are encrypted and decrypted strictly on your local machine using keys derived from your Master Password.
+* **Argon2id Key Derivation** — Industry-standard, memory-hard key derivation to guard against brute-force and GPU/ASIC attacks.
+* **Dual-Transfer 60-Second TOTP MFA** — Dedicated authentication service generates and verifies synchronized time-based one-time tokens.
+* **SSL/TLS Secured Communications** — All network communications between the desktop client, mobile authenticator, and the auth server run exclusively over HTTPS.
+* **Cryptographic Integrity Verification** — SHA-256 hash checksums ensure instant detection of any unauthorized external tampering with vault data.
+* **Modern High-Contrast Dark GUI** — Sleek desktop and mobile authenticator interfaces built with CustomTkinter.
 
 ---
 
-## 📋 System Requirements
+## 🎯 Architecture & Data Flow
 
-### Prerequisites
-- Python 3.8 or higher
-- Windows OS (batch scripts included)
-- Virtual environment support
+```
+┌─────────────────┐             HTTPS              ┌──────────────┐
+│  Mobile Auth    │ ◄────────────────────────────► │  MFA Server  │
+│      App        │   Register / Fetch Sync OTP    │   (HTTPS)    │
+└─────────────────┘                                └──────────────┘
+                                                           ▲
+                                                           │ HTTPS
+                                                           │ Verify OTP
+                                                           ▼
+┌─────────────────┐                                ┌──────────────┐
+│   VaultGuard    │                                │ Encrypted    │
+│     Client      │ ◄────────────────────────────► │ Vault File   │
+│   (GUI / CLI)   │       AES-256-GCM / Argon2     │ (vault.dat)  │
+└─────────────────┘                                └──────────────┘
+```
 
-### Python Dependencies
+### Core Components
+
+1. **VaultGuard Desktop Client (`src/gui/vault_gui.py`)**  
+   The primary application window. Manages master password authentication, credentials CRUD, search, local AES encryption/decryption, and MFA handshake.
+2. **MFA Authentication Server (`src/auth/mfa_server.py`)**  
+   Flask-based HTTPS microservice providing user registration, TOTP secret generation, and verification over a 60-second window.
+3. **Mobile Authenticator Simulator (`src/gui/mobile_auth_gui.py`)**  
+   A smartphone-styled companion GUI for generating and viewing live 6-digit TOTP codes with an active countdown timer.
+4. **Cryptography Engine (`src/core/crypto_manager.py`)**  
+   Handles Argon2id salt generation, key stretching, AES-GCM tag verification, and authenticated payloads.
+5. **Secure Vault Storage (`src/core/vault_file_manager.py`)**  
+   Manages atomic writes, serialized encrypted payloads, and SHA-256 hash integrity validation.
+
+---
+
+## ⚙️ Prerequisites & Dependencies
+
+* **Python 3.8+**
+* Windows (batch launch scripts provided)
+
+### Required Libraries
+
 ```
 cryptography
 argon2-cffi
@@ -66,7 +71,7 @@ requests
 pyotp
 urllib3
 pyperclip
-customtkinter  <-- NEW: Modern GUI Library
+customtkinter
 pillow
 packaging
 ```
@@ -75,309 +80,163 @@ packaging
 
 ## 🚀 Quick Start
 
-### 1. Installation
+### 1. Clone the Repository
 
 ```bash
-# Clone the repository
-git clone https://github.com/AliTarek-1/security.git
-cd security
+git clone https://github.com/OmarTamer177/Vault-Guard.git
+cd Vault-Guard
+```
 
-# Install dependencies (REQUIRED for new GUI)
+### 2. Setup Dependencies
+
+Run the automated dependency installer (creates/uses the local virtual environment):
+
+```cmd
 install_deps.bat
 ```
 
-### 2. Running the System
+Alternatively, manually install using `pip`:
 
-**Option A: GUI Version (Recommended)**
 ```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 3. Launch the Application
+
+**Option A: Full GUI Suite (Recommended)**
+
+```cmd
 start_gui.bat
 ```
-This launches:
-- MFA Server (HTTPS on port 5000)
-- Mobile Authenticator (Modern Dark UI)
-- VaultGuard Password Manager (Modern Dark UI)
+This launcher simultaneously boots:
+1. The **MFA Server** (HTTPS background daemon on `127.0.0.1:5000`)
+2. The **Mobile Authenticator GUI**
+3. The **VaultGuard Desktop Client**
 
-**Option B: Console Version**
-```bash
-start_system.bat
-```
-This launches command-line interfaces for all components.
+**Option B: CLI Mode**
 
-### 3. First-Time Setup
-
-1. **Register in Mobile App**
-   - Open Mobile Authenticator
-   - Click "Scan / Register New Device"
-   - Enter username (e.g., "bob")
-   - Save the secret displayed
-
-2. **Get OTP Code**
-   - Click on your username in the mobile app card
-   - Note the large blue 6-digit OTP code
-   - Code refreshes every 60 seconds
-
-3. **Login to VaultGuard**
-   - Open VaultGuard Password Manager
-   - Enter Master Password (create new one if first time)
-   - Enter username (same as mobile app)
-   - Enter current OTP code
-   - Access granted!
-
----
-
-## 🏗️ System Architecture
-
-### Components
-
-#### 1. VaultGuard Client (`vault_gui.py`)
-- Main password manager interface (CustomTkinter)
-- Handles master password authentication
-- Encrypts/decrypts vault data locally
-- Communicates with MFA server for authentication
-
-#### 2. MFA Server (`mfa_server.py`)
-- Flask-based HTTPS server
-- Manages user registration
-- Generates and validates TOTP codes
-- Dual transfer OTP mechanism
-
-#### 3. Mobile Authenticator (`mobile_auth_gui.py`)
-- User-friendly Smartphone-style GUI
-- Saves registered users locally
-- Live OTP countdown timer
-- Copy to clipboard support
-
-#### 4. Cryptography Module (`crypto_manager.py`)
-- Argon2id password hashing
-- AES-256-GCM encryption/decryption
-- Key derivation functions
-- Data integrity verification
-
-#### 5. Vault File Manager (`vault_file_manager.py`)
-- Secure file I/O operations
-- SHA-256 integrity checking
-- JSON-based encrypted storage
-
-### Data Flow
-
-```
-┌─────────────────┐     HTTPS     ┌──────────────┐
-│  Mobile Auth    │◄─────────────►│  MFA Server  │
-│      App        │   Register    │   (HTTPS)    │
-└─────────────────┘   Get OTP     └──────────────┘
-                                           ▲
-                                           │ HTTPS
-                                           │ Verify OTP
-                                           ▼
-┌─────────────────┐              ┌──────────────┐
-│   VaultGuard    │              │ Encrypted    │
-│     Client      │◄────────────►│ Vault File   │
-│   (GUI/CLI)     │   AES-256    │  (vault.dat) │
-└─────────────────┘   Argon2     └──────────────┘
+```cmd
+scripts\start_system.bat
 ```
 
 ---
 
-## 🔬 Testing
+## 🔑 First-Time Setup Walkthrough
 
-### Run All Tests
-```bash
+1. **Register on Mobile Authenticator**
+   - In the **VaultGuard Authenticator** window, click **Scan / Register New Device**.
+   - Input your desired username (e.g., `alice`) and submit.
+   - The app securely stores your secret profile locally.
+2. **Retrieve your 6-digit OTP**
+   - Click on your username card in the Authenticator window.
+   - Note the active 6-digit code and the countdown timer.
+3. **Log in to VaultGuard**
+   - In the **VaultGuard Client** window:
+     - Set/enter your **Master Password**.
+     - Enter your **Username**.
+     - Enter the current **OTP Code** from the authenticator.
+   - Click **Unlock / Login**.
+
+---
+
+## 🔬 Testing & Verification
+
+Comprehensive automated test suites cover cryptography, KDF parameters, TOTP synchronization, and tamper resistance:
+
+### Run the Complete Test Suite
+```cmd
 run_tests.bat
 ```
 
-### Individual Test Suites
+### Run Individual Test Modules
 ```bash
-# Test cryptography
+# Cryptography tests (AES-256-GCM encryption/decryption)
 python -m unittest tests.test_crypto
 
-# Test Argon2 KDF
+# Argon2id KDF verification
 python -m unittest tests.test_argon2
 
-# Test MFA/TOTP
+# MFA & TOTP server/client verification
 python -m unittest tests.test_mfa
 
-# Test vault integrity
+# File integrity & tampering detection tests
 python -m unittest tests.test_vault
 
-# Integration tests
+# End-to-end integration workflow tests
 python -m unittest tests.test_integration
 ```
 
-### Test Coverage
-- ✅ AES-256-GCM encryption/decryption
-- ✅ Argon2id key derivation
-- ✅ TOTP 60-second interval
-- ✅ OTP generation and verification
-- ✅ Vault file integrity
-- ✅ Tampering detection
-- ✅ End-to-end workflow
+---
+
+## 📊 Security Specifications
+
+| Mechanism | Standard / Parameter | Specification Detail |
+|---|---|---|
+| **Symmetric Encryption** | AES-256-GCM | Authenticated Encryption with Associated Data (AEAD) |
+| **Key Derivation** | Argon2id | Memory: 64 MB, Iterations: 3, Parallelism: 4, Salt: 16 bytes |
+| **Two-Factor Auth** | RFC 6238 TOTP | HMAC-SHA1, 6-digit token, 60s validity window |
+| **Transport Layer** | TLS / HTTPS | Self-signed / adhoc SSL for local communications |
+| **Integrity Check** | SHA-256 | Computed over ciphertext prior to load and verified against storage manifest |
 
 ---
 
-## 📊 Security Analysis
-
-### Encryption Standards
-- **Algorithm**: AES-256-GCM (Galois/Counter Mode)
-- **Key Size**: 256 bits
-- **Authentication**: Built-in AEAD (Authenticated Encryption with Associated Data)
-
-### Key Derivation
-- **Function**: Argon2id (hybrid version)
-- **Memory**: 64 MB
-- **Iterations**: 3
-- **Parallelism**: 4 threads
-- **Salt**: 16 bytes random
-
-### MFA Implementation
-- **Protocol**: TOTP (RFC 6238)
-- **Interval**: 60 seconds
-- **Algorithm**: HMAC-SHA1
-- **Code Length**: 6 digits
-
-### Integrity Verification
-- **Hash**: SHA-256
-- **Coverage**: Entire vault file
-- **Verification**: On every load
-
----
-
-## 💾 File Structure
+## 📂 Repository Structure
 
 ```
-security/
+Vault-Guard/
+├── .gitignore               # Excludes bytecode, .venv, IDE, and runtime databases
+├── requirements.txt         # Project dependencies
+├── install_deps.bat         # Dependency installer
+├── start_gui.bat            # One-click multi-process launcher
+├── run_tests.bat            # Test runner
+├── README.md
 ├── src/
 │   ├── auth/
-│   │   ├── mfa_server.py       # MFA HTTPS server
-│   │   └── mfa_client.py       # MFA client library
+│   │   ├── mfa_server.py    # Flask HTTPS MFA server
+│   │   └── mfa_client.py    # MFA client connection library
 │   ├── cli/
-│   │   ├── main.py             # CLI Entry point
-│   │   └── mobile_auth_app.py  # Mobile CLI
+│   │   ├── main.py          # Terminal CLI client
+│   │   └── mobile_auth_app.py # Terminal authenticator simulator
 │   ├── core/
-│   │   ├── crypto_manager.py   # Cryptography Core
-│   │   └── vault_file_manager.py # File Manager
+│   │   ├── crypto_manager.py     # AES-GCM & Argon2id engine
+│   │   ├── interfaces.py         # Abstract base classes
+│   │   └── vault_file_manager.py # File storage & integrity verification
 │   ├── gui/
-│   │   ├── vault_gui.py        # Main Desktop App
-│   │   └── mobile_auth_gui.py  # Mobile App Simulator
+│   │   ├── vault_gui.py          # Modern desktop vault interface
+│   │   └── mobile_auth_gui.py    # Companion mobile authenticator interface
 │   └── utils/
-├── data/                       # Storage for Vault & DBs
-│   ├── vault.dat
-│   ├── mfa_db.json
-│   └── mobile_users.json
+│       └── debug_env.py
+├── data/
+│   └── .gitkeep             # Runtime data directory (local vaults & DBs)
 ├── docs/
-│   └── VaultGuard_Report.tex
-├── scripts/                    # Helper batch scripts
+│   ├── VaultGuard_Report.tex
+│   └── verification_matrix.md
+├── scripts/
 │   ├── run_app.bat
+│   ├── start_system.bat
 │   └── ...
-├── tests/                      # Unit & Integration Tests
-├── start_gui.bat               # ONE-CLICK LAUNCHER
-├── run_tests.bat               # Test Runner
-├── install_deps.bat            # Dependency Installer
-├── requirements.txt
-└── README.md
+└── tests/
+    ├── test_crypto.py
+    ├── test_argon2.py
+    ├── test_mfa.py
+    ├── test_vault.py
+    └── test_integration.py
 ```
-
----
-
-## 🛡️ Security Best Practices Implemented
-
-✅ **Never store passwords in plaintext**
-✅ **Use strong KDF (Argon2id) for key derivation**
-✅ **Implement proper salting for password hashes**
-✅ **Encrypt all sensitive data at rest**
-✅ **Use authenticated encryption (AEAD)**
-✅ **Secure all network communication with SSL/TLS**
-✅ **Implement integrity checking**
-✅ **Use time-based one-time passwords for 2FA**
-✅ **Validate all user inputs**
-✅ **Handle errors securely without leaking information**
-
----
-
-## 🚧 Known Limitations
-
-1. **Single-user application** - Not designed for multi-user scenarios
-2. **Self-signed certificates** - Development uses adhoc SSL (production needs proper certs)
-3. **Local storage only** - No cloud sync capability
-4. **Windows-focused** - Batch scripts are Windows-specific
-5. **No password strength meter** - Users must choose strong passwords
-6. **No account recovery** - Lost master password means lost data
-
----
-
-## 📚 Technologies Used
-
-- **Python 3.x** - Primary language
-- **Flask** - MFA server framework
-- **cryptography** - AES-GCM encryption
-- **argon2-cffi** - Argon2 key derivation
-- **pyotp** - TOTP implementation
-- **CustomTkinter** - Modern GUI framework
-- **unittest** - Testing framework
-
----
-
-## 🎓 Learning Outcomes
-
-This project demonstrates:
-- Secure password management implementation
-- Client-side encryption best practices
-- Multi-factor authentication systems
-- SSL/TLS secured communication
-- Key derivation functions (KDF)
-- Hash-based integrity verification
-- Time-based one-time password (TOTP) protocol
-- Agile development methodology
-- Comprehensive testing strategies
 
 ---
 
 ## 👥 Contributors
 
-- **Ali Tarek** - Project Lead & Implementation
-- **Omar Tamer** - Core Development & Security Features
-- **Fatma Ayman** - Backend Development & MFA
-- **Ahmed El-Baramouny** - Security Analysis & Testing
-- **Ahmed Mohamed** - GUI Development & Documentation
-- Course: Information Security
-- Institution: [Your University Name]
-- Date: December 2025
+* **Ali Tarek** — Project Lead & Implementation
+* **Omar Tamer** — Core Development & Security Features
+* **Fatma Ayman** — Backend Development & MFA
+* **Ahmed El-Baramouny** — Security Analysis & Testing
+* **Ahmed Mohamed** — GUI Development & Documentation
 
 ---
 
-## 📄 License
+## 📄 License & Academic Note
 
-This project is for educational purposes as part of an Information Security course.
-
----
-
-## 🆘 Troubleshooting
-
-### Issue: "Could not connect to MFA Server"
-**Solution**: Make sure `mfa_server.py` is running first. `start_gui.bat` handles this automatically.
-
-### Issue: "Invalid or expired OTP"
-**Solution**: 
-- Check that OTP is entered within 60 seconds
-- Ensure system clocks are synchronized
-- Verify you're using the correct username
-
-### Issue: "CustomTkinter not found"
-**Solution**:
-- Run `install_deps.bat` to install the new GUI dependencies.
-
-### Issue: "Failed to decrypt vault"
-**Solution**:
-- Verify you're using the correct master password
-- If password is lost, delete `vault.dat` to start fresh
-- Check that vault file hasn't been corrupted
-
-### Issue: SSL/TLS certificate errors
-**Solution**:
-- Install pyOpenSSL: `pip install pyopenssl`
-- Allow self-signed certificates in development
-- For production, use proper SSL certificates
-
----
-
-
-**Built with security in mind. Keep your passwords safe! 🔐**
+This project was developed for educational and demonstration purposes as part of the Information Security course.
